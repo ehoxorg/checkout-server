@@ -13,26 +13,35 @@ import (
 
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
-	myRouter.HandleFunc("/baskets/", allBaskets).Methods("GET")
-	myRouter.HandleFunc("/baskets/", newBasket).Methods("POST")
-	myRouter.HandleFunc("/baskets/{basketid}/", getBasket).Methods("GET")
-	myRouter.HandleFunc("/baskets/{basketid}/", deleteBasket).Methods("DELETE")
-	myRouter.HandleFunc("/baskets/{basketid}/products/", getProductsInBasket).Methods("GET")
-	myRouter.HandleFunc("/baskets/{basketid}/products/{productid}/", addItemInBasket).Methods("PUT")
+	myRouter.HandleFunc("/baskets/", allBaskets).Methods("GET", "OPTIONS")
+	myRouter.HandleFunc("/baskets/", newBasket).Methods("POST", "OPTIONS")
+	myRouter.HandleFunc("/baskets/{basketid}/", getBasket).Methods("GET", "OPTIONS")
+	myRouter.HandleFunc("/baskets/{basketid}/", deleteBasket).Methods("DELETE", "OPTIONS")
+	myRouter.HandleFunc("/baskets/{basketid}/products/", getProductsInBasket).Methods("GET", "OPTIONS")
+	myRouter.HandleFunc("/baskets/{basketid}/products/{productid}/", addItemInBasket).Methods("PUT", "OPTIONS")
 	log.Fatal(http.ListenAndServe(":8090", myRouter))
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+}
+
 func allBaskets(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	json.NewEncoder(w).Encode(baskets)
 }
 
 func newBasket(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	b := NewBasket()
 	baskets = append(baskets, b)
 	json.NewEncoder(w).Encode(baskets)
 }
 
 func addItemInBasket(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	vars := mux.Vars(r)
 	basketId, err1 := strconv.Atoi(vars["basketid"])
 	productId, err2 := strconv.Atoi(vars["productid"])
@@ -53,6 +62,7 @@ func addItemInBasket(w http.ResponseWriter, r *http.Request) {
 }
 
 func getBasket(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	vars := mux.Vars(r)
 	basketId, err1 := strconv.Atoi(vars["basketid"])
 	b := baskets[basketId]
@@ -65,6 +75,7 @@ func getBasket(w http.ResponseWriter, r *http.Request) {
 }
 
 func getProductsInBasket(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	vars := mux.Vars(r)
 	basketId, err1 := strconv.Atoi(vars["basketid"])
 	i := baskets[basketId].Items
@@ -77,6 +88,7 @@ func getProductsInBasket(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteBasket(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	vars := mux.Vars(r)
 	basketId, err1 := strconv.Atoi(vars["basketid"])
 	if err1 != nil {
