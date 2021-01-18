@@ -30,74 +30,98 @@ func enableCors(w *http.ResponseWriter) {
 
 func allBaskets(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	json.NewEncoder(w).Encode(baskets)
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		json.NewEncoder(w).Encode(baskets)
+	}
 }
 
 func newBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	b := NewBasket()
-	baskets = append(baskets, b)
-	json.NewEncoder(w).Encode(baskets)
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		b := NewBasket()
+		baskets = append(baskets, b)
+		json.NewEncoder(w).Encode(baskets)
+	}
 }
 
 func addItemInBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	vars := mux.Vars(r)
-	basketId, err1 := strconv.Atoi(vars["basketid"])
-	productId, err2 := strconv.Atoi(vars["productid"])
-	b := &baskets[basketId]
-	if err1 != nil {
-		// handle error
-		fmt.Println(err1)
-		os.Exit(2)
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		vars := mux.Vars(r)
+		basketId, err1 := strconv.Atoi(vars["basketid"])
+		productId, err2 := strconv.Atoi(vars["productid"])
+		b := &baskets[basketId]
+		if err1 != nil {
+			// handle error
+			fmt.Println(err1)
+			os.Exit(2)
+		}
+		if err2 != nil {
+			// handle error
+			fmt.Println(err2)
+			os.Exit(2)
+		}
+		item := GetProductById(productId)
+		AddProduct(b, item)
+		json.NewEncoder(w).Encode(b)
 	}
-	if err2 != nil {
-		// handle error
-		fmt.Println(err2)
-		os.Exit(2)
-	}
-	item := GetProductById(productId)
-	AddProduct(b, item)
-	json.NewEncoder(w).Encode(b)
 }
 
 func getBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	vars := mux.Vars(r)
-	basketId, err1 := strconv.Atoi(vars["basketid"])
-	b := baskets[basketId]
-	if err1 != nil {
-		// handle error
-		fmt.Println(err1)
-		os.Exit(2)
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		vars := mux.Vars(r)
+		basketId, err1 := strconv.Atoi(vars["basketid"])
+		b := baskets[basketId]
+		if err1 != nil {
+			// handle error
+			fmt.Println(err1)
+			os.Exit(2)
+		}
+		json.NewEncoder(w).Encode(b)
 	}
-	json.NewEncoder(w).Encode(b)
 }
 
 func getProductsInBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	vars := mux.Vars(r)
-	basketId, err1 := strconv.Atoi(vars["basketid"])
-	i := baskets[basketId].Items
-	if err1 != nil {
-		// handle error
-		fmt.Println(err1)
-		os.Exit(2)
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		vars := mux.Vars(r)
+		basketId, err1 := strconv.Atoi(vars["basketid"])
+		i := baskets[basketId].Items
+		if err1 != nil {
+			// handle error
+			fmt.Println(err1)
+			os.Exit(2)
+		}
+		json.NewEncoder(w).Encode(i)
 	}
-	json.NewEncoder(w).Encode(i)
 }
 
 func deleteBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	vars := mux.Vars(r)
-	basketId, err1 := strconv.Atoi(vars["basketid"])
-	if err1 != nil {
-		// handle error
-		fmt.Println(err1)
-		os.Exit(2)
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+	} else {
+		vars := mux.Vars(r)
+		basketId, err1 := strconv.Atoi(vars["basketid"])
+		if err1 != nil {
+			// handle error
+			fmt.Println(err1)
+			os.Exit(2)
+		}
+		RemoveBasket(basketId)
+		json.NewEncoder(w).Encode(baskets)
 	}
-	RemoveBasket(basketId)
-	json.NewEncoder(w).Encode(baskets)
 }
 
 func main() {
