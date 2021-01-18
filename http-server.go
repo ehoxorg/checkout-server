@@ -13,12 +13,12 @@ import (
 
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
-	myRouter.HandleFunc("/baskets/", allBaskets).Methods("GET", "OPTIONS")
-	myRouter.HandleFunc("/baskets/", newBasket).Methods("POST", "OPTIONS")
-	myRouter.HandleFunc("/baskets/{basketid}/", getBasket).Methods("GET", "OPTIONS")
-	myRouter.HandleFunc("/baskets/{basketid}/", deleteBasket).Methods("DELETE", "OPTIONS")
-	myRouter.HandleFunc("/baskets/{basketid}/products/", getProductsInBasket).Methods("GET", "OPTIONS")
-	myRouter.HandleFunc("/baskets/{basketid}/products/{productid}/", addItemInBasket).Methods("PUT", "OPTIONS")
+	myRouter.HandleFunc("/baskets/", AllBaskets).Methods("GET", "OPTIONS")
+	myRouter.HandleFunc("/baskets/", CreateBasket).Methods("POST", "OPTIONS")
+	myRouter.HandleFunc("/baskets/{basketid}/", GetBasket).Methods("GET", "OPTIONS")
+	myRouter.HandleFunc("/baskets/{basketid}/", DeleteBasket).Methods("DELETE", "OPTIONS")
+	myRouter.HandleFunc("/baskets/{basketid}/products/", GetProductsInBasket).Methods("GET", "OPTIONS")
+	myRouter.HandleFunc("/baskets/{basketid}/products/{productid}/", AddItemInBasket).Methods("PUT", "OPTIONS")
 	log.Fatal(http.ListenAndServe(":8090", myRouter))
 }
 
@@ -28,7 +28,7 @@ func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
 }
 
-func allBaskets(w http.ResponseWriter, r *http.Request) {
+func AllBaskets(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
@@ -37,7 +37,7 @@ func allBaskets(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func newBasket(w http.ResponseWriter, r *http.Request) {
+func CreateBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
@@ -48,7 +48,7 @@ func newBasket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func addItemInBasket(w http.ResponseWriter, r *http.Request) {
+func AddItemInBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
@@ -73,7 +73,7 @@ func addItemInBasket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getBasket(w http.ResponseWriter, r *http.Request) {
+func GetBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
@@ -90,7 +90,7 @@ func getBasket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getProductsInBasket(w http.ResponseWriter, r *http.Request) {
+func GetProductsInBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
@@ -107,7 +107,7 @@ func getProductsInBasket(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func deleteBasket(w http.ResponseWriter, r *http.Request) {
+func DeleteBasket(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	if r.Method == "OPTIONS" {
 		w.WriteHeader(http.StatusOK)
